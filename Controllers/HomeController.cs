@@ -1,11 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using LanguageFeatures.Models;
+using System;
 
 namespace LanguageFeatures.Controllers
 {
     public class HomeController:Controller
     {
+        bool FilterByPrice(Product p)
+        {
+            return (p?.Price ?? 0) >= 20;
+        }
         public ViewResult Index()
         {
             ShopingCart cart = new ShopingCart { Products = Product.GetProducts() };
@@ -16,10 +21,20 @@ namespace LanguageFeatures.Controllers
                 new Product{Name="Soccer ball", Price=19.50M},
                 new Product{Name="Corner flag", Price=34.95M}
             };
-            decimal arraytotal = productArray.FilterByPrice(20).TotalPrices();
+            Func<Product, bool> nameFilter = delegate (Product prod)
+            {
+                return prod?.Name?[0] == 'S';
+            };
+            decimal priceFilterTotal = productArray
+                .Filter(FilterByPrice)
+                .TotalPrices();
+            decimal namefilterTotal= productArray
+                .Filter(nameFilter)
+                .TotalPrices();
             return View("Index", new string[]
             {
-                $"Array Total: {arraytotal:C2}"
+                $"Price Total: {priceFilterTotal:C2}",
+                $"Name Total: {namefilterTotal:C2}"
             });
         }
     }
