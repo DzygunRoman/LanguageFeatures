@@ -3,16 +3,14 @@ using System.Collections.Generic;
 
 namespace LanguageFeatures.Models
 {
-    public class ShopingCart:IEnumerable<Product>//оболочка для последовательности объектов Product
+    public class ShopingCart : IProductSelection
     {
-        public IEnumerable<Product>Products { get; set; }
-        public IEnumerator<Product> GetEnumerator()
+        private List<Product>products=new List<Product>();  
+        public ShopingCart(params Product[] prods)
         {
-            return Products.GetEnumerator();
+            products.AddRange(prods);
         }
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        public IEnumerable<Product> Products { get  =>products;  }
+    
     }
 }
